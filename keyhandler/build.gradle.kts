@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
 }
 
-group = "io.github.compose-keyhandler"
+group = "io.github"
 version = "0.1.0"
 
 kotlin {

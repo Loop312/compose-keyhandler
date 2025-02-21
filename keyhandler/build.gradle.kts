@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
 }
 
-group = "io.github"
+group = "io.github.loop312"
 version = "0.1.0"
 
 kotlin {

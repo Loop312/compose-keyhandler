@@ -13,8 +13,8 @@ kotlin {
             //Format: groupId:artifactId:version
             //groupId = io.github.loop312
             //artifactId = compose-keyhandler
-            //version = 0.2.0 (choose latest version instead)
-            implementation("io.github.loop312:compose-keyhandler:0.2.0")
+            //version = 0.2.1 (choose latest version instead)
+            implementation("io.github.loop312:compose-keyhandler:0.2.1")
         }
     }
 }

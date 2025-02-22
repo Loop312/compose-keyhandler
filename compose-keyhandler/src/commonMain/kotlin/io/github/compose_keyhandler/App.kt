@@ -22,7 +22,7 @@ fun App() {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }, Modifier.onKeyEvent(lol.listener)) {
+            Button(onClick = { showContent = !showContent }, Modifier.onKeyEvent(lol.listen)) {
                 Text("Click me!")
             }
             lol.activate()

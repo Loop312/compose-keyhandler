@@ -16,8 +16,8 @@ class KeyHandler {
         keys += mapOf(key to action)
     }
 
-    //use modifier = "Modifier.onKeyEvent(KeyHandler.listener)"
-    val listener = { event: KeyEvent ->
+    //use modifier = "Modifier.onKeyEvent(KeyHandler.listen)"
+    val listen = { event: KeyEvent ->
         //when a button is pressed add it to pressedKeys and when it's released remove it
         when (event.type) {
             KeyEventType.KeyDown -> {

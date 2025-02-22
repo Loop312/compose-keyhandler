@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.github.loop312"
-version = "0.1.0"
+version = "0.2.0"
 
 kotlin {
     androidTarget {
@@ -161,7 +161,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(group.toString(), "keyhandler", version.toString())
+    coordinates(group.toString(), "compose-keyhandler", version.toString())
 
     pom {
         name = "Compose KeyHandler"

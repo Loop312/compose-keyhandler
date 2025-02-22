@@ -161,7 +161,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(group.toString(), "keyhandler", version.toString())
+    coordinates(group.toString(), "compose-keyhandler", version.toString())
 
     pom {
         name = "Compose KeyHandler"

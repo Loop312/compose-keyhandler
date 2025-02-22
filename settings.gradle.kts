@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "compose-keyhandler"
-include(":keyhandler")
+include(":compose-keyhandler")

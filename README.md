@@ -21,7 +21,7 @@ kotlin {
 ```
 
 ```kotlin
-implementation("io.github.loop312:compose-keyhandler:0.2.0") 
+implementation("io.github.loop312:compose-keyhandler:0.2.1") 
 ```
 
 ### Common Main

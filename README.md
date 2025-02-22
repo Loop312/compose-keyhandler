@@ -1,3 +1,64 @@
+# Usage
+
+*MUST USE WITH COMPOSE MULTIPLATFORM*
+### build.gradle.kts
+
+```kotlin
+kotlin {
+    //...
+    sourceSets {
+        //...
+        commonMain.dependencies {
+            //...
+            //Format: groupId:artifactId:version
+            //groupId = io.github.loop312
+            //artifactId = compose-keyhandler
+            //version = 0.2.0 (choose latest version instead)
+            implementation("io.github.loop312:compose-keyhandler:0.2.0")
+        }
+    }
+}
+```
+
+```kotlin
+implementation("io.github.loop312:compose-keyhandler:0.2.0") 
+```
+
+### Common Main
+```kotlin
+//import ...
+/*
+import io.github.loop312.compose_keyhandler.KeyHandler
+or for more fine control of the variables
+import io.github.compose_keyhandler.*
+*/
+
+//doesn't need to be outside main function
+val keyHandler = KeyHandler()
+
+keyHandler.addKey(Key.A){
+    println("A is being pressed")
+    //or any other action you want to do
+}
+
+fun main() {
+    Box(Modifier.onKeyEvent(keyHandler.listen)) {
+        //...
+    }
+    keyHandler.activate()
+}
+```
+
+## Method
+
+- maps a key to an action
+- whenever a key is pressed, it gets added to a set
+- whenever a key is released, it gets removed from the set
+- while the key is pressed, the action is executed
+
+
+# Came With Project Structure
+
 [![official project](http://jb.gg/badges/official.svg)](https://github.com/JetBrains#jetbrains-on-github)
 
 # Multiplatform library template

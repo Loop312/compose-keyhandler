@@ -1,3 +1,6 @@
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.loop312/compose-keyhandler)
+
+
 # Usage
 
 *MUST USE WITH COMPOSE MULTIPLATFORM*

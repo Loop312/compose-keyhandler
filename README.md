@@ -13,49 +13,63 @@ kotlin {
             //Format: groupId:artifactId:version
             //groupId = io.github.loop312
             //artifactId = compose-keyhandler
-            //version = 0.2.1 (choose latest version instead)
-            implementation("io.github.loop312:compose-keyhandler:0.2.1")
+            //version = 0.5.0 (choose latest version instead)
+            implementation("io.github.loop312:compose-keyhandler:0.5.0")
         }
     }
 }
 ```
 
 ```kotlin
-implementation("io.github.loop312:compose-keyhandler:0.2.1") 
+implementation("io.github.loop312:compose-keyhandler:0.5.0") 
 ```
 
 ### Common Main
 ```kotlin
+//import io.github.loop312.compose_keyhandler.KeyHandler
 //import ...
-/*
-import io.github.loop312.compose_keyhandler.KeyHandler
-or for more fine control of the variables
-import io.github.compose_keyhandler.*
-*/
-
-//doesn't need to be outside main function
-val keyHandler = KeyHandler()
-
-keyHandler.addKey(Key.A){
-    println("A is being pressed")
-    //or any other action you want to do
-}
 
 fun main() {
+    //KeyHandler(false) will not consume key events
+    val keyHandler = KeyHandler()
+    
+    //continuous execution
+    keyHandler.addKey(Key.A) {
+        println("A is being pressed")
+        //or any other action you want to do
+    }
+    
+    //one-time execution
+    keyHandler.addSingleActionKey(Key.B) {
+        println("B was pressed")
+        //or any other action you want to do
+    }
+    
+    //on release execution
+    keyHandler.addReleaseKey(Key.C) {
+        println("C was released")
+        //or any other action you want to do
+    }
+    
+    //continuous combination execution
+    keyHandler.addCombination(setOf(Key.D, Key.E)) {
+        println("DE is being pressed")
+        //or any other action you want to do
+    }
+    
+    //one-time combination execution
+    keyHandler.addSingleActionCombination(setOf(Key.F, Key.G)) {
+        println("FG was pressed")
+        //or any other action you want to do
+    }
+    //or Modifier.onPreviewKeyEvent(keyHandler.listen)
     Box(Modifier.onKeyEvent(keyHandler.listen)) {
         //...
     }
-    keyHandler.activate()
 }
 ```
 
-## Method
-
-- maps a key to an action
-- whenever a key is pressed, it gets added to a set
-- whenever a key is released, it gets removed from the set
-- while the key is pressed, the action is executed
-
+### NOTE: Make sure object with modifier `onKeyEvent` or `onPreviewKeyEvent` is in focus
 
 # Came With Project Structure
 

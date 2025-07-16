@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.github.loop312"
-version = "0.2.1"
+version = "0.5.0"
 
 kotlin {
     androidTarget {
@@ -40,7 +40,7 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "composeApp"
+        outputModuleName.set("composeApp")
         browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
@@ -80,12 +80,13 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
         }
-
+        /*
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
             }
         }
+         */
     }
 }
 

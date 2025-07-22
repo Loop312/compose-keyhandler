@@ -23,11 +23,20 @@ class KeyHandler (consume: Boolean = true) {
     fun addKey(key: Key, action: () -> Unit) {
         keys[key] = action
     }
+    fun addMultipleKeys(keySet: Set<Key>, action: () -> Unit) {
+        keySet.forEach { key -> keys[key] = action }
+    }
     fun addSingleActionKey(key: Key, action: () -> Unit) {
         singleActionKeys[key] = action
     }
+    fun addMultipleSingleActionKeys(keySet: Set<Key>, action: () -> Unit) {
+        keySet.forEach { key -> singleActionKeys[key] = action }
+    }
     fun addReleaseKey(key: Key, action: () -> Unit) {
         releaseKeys[key] = action
+    }
+    fun addMultipleReleaseKeys(keySet: Set<Key>, action: () -> Unit) {
+        keySet.forEach { key -> releaseKeys[key] = action }
     }
     fun addCombination(combination: Set<Key>, action: () -> Unit) {
         combinations[combination] = action

@@ -24,37 +24,51 @@ fun KeyHandlerTest() {
         //or any other action you want to do
     }
 
+    keyHandler.addMultipleKeys(setOf(Key.B, Key.C)) {
+        println("B or C is being pressed")
+        //or any other action you want to do
+    }
+
     //one-time execution
-    keyHandler.addSingleActionKey(Key.B) {
-        println("B was pressed")
+    keyHandler.addSingleActionKey(Key.D) {
+        println("D was pressed")
+        //or any other action you want to do
+    }
+
+    keyHandler.addMultipleSingleActionKeys(setOf(Key.E, Key.F)) {
+        println("E or F was pressed")
         //or any other action you want to do
     }
 
     //on release execution
-    keyHandler.addReleaseKey(Key.C) {
-        println("C was released")
+    keyHandler.addReleaseKey(Key.G) {
+        println("G was released")
+        //or any other action you want to do
+    }
+
+    keyHandler.addMultipleReleaseKeys(setOf(Key.H, Key.I)) {
+        println("H or I was released")
         //or any other action you want to do
     }
 
     //continuous combination execution
-    keyHandler.addCombination(setOf(Key.D, Key.E)) {
-        println("DE is being pressed")
+    keyHandler.addCombination(setOf(Key.J, Key.K)) {
+        println("J and K are being pressed")
         //or any other action you want to do
     }
 
     //one-time combination execution
-    keyHandler.addSingleActionCombination(setOf(Key.F, Key.G)) {
-        println("FG was pressed")
+    keyHandler.addSingleActionCombination(setOf(Key.L, Key.M)) {
+        println("L and M were pressed")
         //or any other action you want to do
     }
+
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = { showContent = !showContent }, Modifier.onKeyEvent(keyHandler.listen)) {
                 Text("Click me!")
             }
-            //lol.activate()
-            //println(lol.toString())
             Text(keyHandler.toString())
         }
     }

@@ -19,46 +19,46 @@ fun KeyHandlerTest() {
     val keyHandler = KeyHandler()
 
     //continuous execution
-    keyHandler.addKey(Key.A) {
+    keyHandler.addKey(key = Key.A, description = "Prints A is being pressed") {
         println("A is being pressed")
         //or any other action you want to do
     }
 
-    keyHandler.addMultipleKeys(setOf(Key.B, Key.C)) {
+    keyHandler.addMultipleKeys(setOf(Key.B, Key.C), "Prints B or C is being pressed") {
         println("B or C is being pressed")
         //or any other action you want to do
     }
 
     //one-time execution
-    keyHandler.addSingleActionKey(Key.D) {
+    keyHandler.addSingleActionKey(Key.D, "Prints D was pressed") {
         println("D was pressed")
         //or any other action you want to do
     }
 
-    keyHandler.addMultipleSingleActionKeys(setOf(Key.E, Key.F)) {
+    keyHandler.addMultipleSingleActionKeys(setOf(Key.E, Key.F), "Prints E or F was pressed") {
         println("E or F was pressed")
         //or any other action you want to do
     }
 
     //on release execution
-    keyHandler.addReleaseKey(Key.G) {
+    keyHandler.addReleaseKey(Key.G, "Prints G was released") {
         println("G was released")
         //or any other action you want to do
     }
 
-    keyHandler.addMultipleReleaseKeys(setOf(Key.H, Key.I)) {
+    keyHandler.addMultipleReleaseKeys(setOf(Key.H, Key.I), "Prints H or I was released") {
         println("H or I was released")
         //or any other action you want to do
     }
 
     //continuous combination execution
-    keyHandler.addCombination(setOf(Key.J, Key.K)) {
+    keyHandler.addCombination(setOf(Key.J, Key.K), "Prints J and K are being pressed") {
         println("J and K are being pressed")
         //or any other action you want to do
     }
 
     //one-time combination execution
-    keyHandler.addSingleActionCombination(setOf(Key.L, Key.M)) {
+    keyHandler.addSingleActionCombination(setOf(Key.L, Key.M), "Prints L and M were pressed") {
         println("L and M were pressed")
         //or any other action you want to do
     }

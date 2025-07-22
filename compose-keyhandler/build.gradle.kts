@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.github.loop312"
-version = "0.5.0"
+version = "0.6.0"
 
 kotlin {
     androidTarget {

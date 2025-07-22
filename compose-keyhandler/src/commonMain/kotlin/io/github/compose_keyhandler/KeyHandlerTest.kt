@@ -24,7 +24,7 @@ fun KeyHandlerTest() {
         //or any other action you want to do
     }
 
-    keyHandler.addMultipleKeys(setOf(Key.B, Key.C), "Prints B or C is being pressed") {
+    keyHandler.addMultipleKeys(keySet = setOf(Key.B, Key.C), description = "Prints B or C is being pressed") {
         println("B or C is being pressed")
         //or any other action you want to do
     }

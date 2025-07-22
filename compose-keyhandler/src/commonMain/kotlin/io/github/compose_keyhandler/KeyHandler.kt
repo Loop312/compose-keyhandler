@@ -45,6 +45,14 @@ class KeyHandler (consume: Boolean = true) {
         singleActionCombinations[combination] = KeyAction(description, action)
     }
 
+    fun getDescription(key: Key): String? {
+        return keys[key]?.description
+    }
+
+    fun getDescription(combination: Set<Key>): String? {
+        return combinations[combination]?.description
+    }
+
     //use modifier = "Modifier.onKeyEvent(KeyHandler.listen)"
     val listen = { event: KeyEvent ->
         val previousPressedKeys = pressedKeys

@@ -45,6 +45,8 @@ fun main() {
         //or any other action you want to do
     }
 
+    println(keyHandler.getDescription(Key.A))
+
     keyHandler.addMultipleKeys(keySet = setOf(Key.B, Key.C), description = "Prints B or C is being pressed") {
         println("B or C is being pressed")
         //or any other action you want to do
@@ -77,6 +79,8 @@ fun main() {
         println("J and K are being pressed")
         //or any other action you want to do
     }
+
+    println(keyHandler.getDescription(setOf(Key.J, Key.K)))
 
     //one-time combination execution
     keyHandler.addSingleActionCombination(setOf(Key.L, Key.M), "Prints L and M were pressed") {

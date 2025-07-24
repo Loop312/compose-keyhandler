@@ -1,23 +1,27 @@
 package io.github.compose_keyhandler
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.key.*
-import kotlin.collections.mutableMapOf
 
-class KeyHandler (consume: Boolean = true) {
+class KeyHandler (consume: Boolean = true, init: KeyHandler.() -> Unit = {}) {
     //keeps track of pressed keys
     var pressedKeys by mutableStateOf(setOf<Key>())
 
     //single key actions
-    var keys by mutableStateOf(mutableMapOf<Key, KeyAction>())
-    var singleActionKeys by mutableStateOf(mutableMapOf<Key, KeyAction>())
-    var releaseKeys by mutableStateOf(mutableMapOf<Key, KeyAction>())
+    var keys = mutableStateMapOf<Key, KeyAction>()
+    var singleActionKeys = mutableStateMapOf<Key, KeyAction>()
+    var releaseKeys = mutableStateMapOf<Key, KeyAction>()
 
     //combinations actions
-    var combinations by mutableStateOf(mutableMapOf<Set<Key>, KeyAction>())
-    var singleActionCombinations by mutableStateOf(mutableMapOf<Set<Key>, KeyAction>())
+    var combinations = mutableStateMapOf<Set<Key>, KeyAction>()
+    var singleActionCombinations = mutableStateMapOf<Set<Key>, KeyAction>()
+
+    init {
+        this.init()
+    }
 
     //add/replace functions
     fun addKey(key: Key, description: String = "No description", action: () -> Unit) {

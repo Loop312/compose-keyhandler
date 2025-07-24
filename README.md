@@ -35,57 +35,61 @@ implementation("io.github.loop312:compose-keyhandler:0.6.0")
 //import androidx.compose.ui.input.key.onKeyEvent
 //...
 
+@Composable
 fun main() {
-    //KeyHandler(false) will not consume key events
-    val keyHandler = KeyHandler()
+    //if initializing outside a composable, don't use remember {}
+    val keyHandler = remember {
+        //KeyHandler(false) will not consume key events
+        KeyHandler() {
+            //continuous execution
+            addKey(key = Key.A, description = "Prints A is being pressed") {
+                println("A is being pressed")
+                //or any other action you want to do
+            }
 
-    //continuous execution
-    keyHandler.addKey(key = Key.A, description = "Prints A is being pressed") {
-        println("A is being pressed")
-        //or any other action you want to do
-    }
+            //println(getDescription(Key.A))
 
-    println(keyHandler.getDescription(Key.A))
+            addMultipleKeys(keySet = setOf(Key.B, Key.C), description = "Prints B or C is being pressed") {
+                println("B or C is being pressed")
+                //or any other action you want to do
+            }
 
-    keyHandler.addMultipleKeys(keySet = setOf(Key.B, Key.C), description = "Prints B or C is being pressed") {
-        println("B or C is being pressed")
-        //or any other action you want to do
-    }
+            //one-time execution
+            addSingleActionKey(Key.D, "Prints D was pressed") {
+                println("D was pressed")
+                //or any other action you want to do
+            }
 
-    //one-time execution
-    keyHandler.addSingleActionKey(Key.D, "Prints D was pressed") {
-        println("D was pressed")
-        //or any other action you want to do
-    }
+            addMultipleSingleActionKeys(setOf(Key.E, Key.F), "Prints E or F was pressed") {
+                println("E or F was pressed")
+                //or any other action you want to do
+            }
 
-    keyHandler.addMultipleSingleActionKeys(setOf(Key.E, Key.F), "Prints E or F was pressed") {
-        println("E or F was pressed")
-        //or any other action you want to do
-    }
+            //on release execution
+            addReleaseKey(Key.G, "Prints G was released") {
+                println("G was released")
+                //or any other action you want to do
+            }
 
-    //on release execution
-    keyHandler.addReleaseKey(Key.G, "Prints G was released") {
-        println("G was released")
-        //or any other action you want to do
-    }
+            addMultipleReleaseKeys(setOf(Key.H, Key.I), "Prints H or I was released") {
+                println("H or I was released")
+                //or any other action you want to do
+            }
 
-    keyHandler.addMultipleReleaseKeys(setOf(Key.H, Key.I), "Prints H or I was released") {
-        println("H or I was released")
-        //or any other action you want to do
-    }
+            //continuous combination execution
+            addCombination(setOf(Key.J, Key.K), "Prints J and K are being pressed") {
+                println("J and K are being pressed")
+                //or any other action you want to do
+            }
 
-    //continuous combination execution
-    keyHandler.addCombination(setOf(Key.J, Key.K), "Prints J and K are being pressed") {
-        println("J and K are being pressed")
-        //or any other action you want to do
-    }
+            //println(getDescription(setOf(Key.J, Key.K)))
 
-    println(keyHandler.getDescription(setOf(Key.J, Key.K)))
-
-    //one-time combination execution
-    keyHandler.addSingleActionCombination(setOf(Key.L, Key.M), "Prints L and M were pressed") {
-        println("L and M were pressed")
-        //or any other action you want to do
+            //one-time combination execution
+            addSingleActionCombination(setOf(Key.L, Key.M), "Prints L and M were pressed") {
+                println("L and M were pressed")
+                //or any other action you want to do
+            }
+        }
     }
     //or Modifier.onPreviewKeyEvent(keyHandler.listen)
     Box(Modifier.onKeyEvent(keyHandler.listen)) {

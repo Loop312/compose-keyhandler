@@ -17,14 +17,14 @@ kotlin {
             //groupId = io.github.loop312
             //artifactId = compose-keyhandler
             //version = 0.6.0 (choose latest version instead)
-            implementation("io.github.loop312:compose-keyhandler:0.6.0")
+            implementation("io.github.loop312:compose-keyhandler:0.6.1")
         }
     }
 }
 ```
 
 ```kotlin
-implementation("io.github.loop312:compose-keyhandler:0.6.0") 
+implementation("io.github.loop312:compose-keyhandler:0.6.1") 
 ```
 
 ### Common Main

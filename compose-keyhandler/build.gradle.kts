@@ -151,7 +151,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.compose_keyhandler"
-            packageVersion = "$version"
+            packageVersion = "1.0.0"
         }
     }
 }

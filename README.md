@@ -29,6 +29,17 @@ implementation("io.github.loop312:compose-keyhandler:0.6.1")
 
 ### Common Main
 ```kotlin
+/*initializer:
+KeyHandler (
+    loopBasedHandling -> this is for truly continuous execution rather than relying on systems input delay, 
+    requires use of KeyHandler.handleInLoop(), Default: false
+    
+    consume -> this is for whether to consume the key event or not, Default: true
+) {
+    initialize keys here
+}
+*/
+-----------------------------------------------------------------------------------
 //import io.github.loop312.compose_keyhandler.KeyHandler
 //import androidx.compose.ui.Modifier
 //import androidx.compose.ui.input.key.Key
@@ -39,8 +50,7 @@ implementation("io.github.loop312:compose-keyhandler:0.6.1")
 fun main() {
     //if initializing outside a composable, don't use remember {}
     val keyHandler = remember {
-        //KeyHandler(false) will not consume key events
-        KeyHandler() {
+        KeyHandler(loopBasedHandling = false, consume = true) {
             //continuous execution
             addKey(key = Key.A, description = "Prints A is being pressed") {
                 println("A is being pressed")
@@ -94,6 +104,17 @@ fun main() {
     //or Modifier.onPreviewKeyEvent(keyHandler.listen)
     Box(Modifier.onKeyEvent(keyHandler.listen)) {
         //...
+    }
+    
+    //optional, for continuous execution (set loopBasedHandling = true)
+    LaunchedEffect(Unit) {
+        while (true) {
+            //if you want to automatically handle it with every frame (can use withFrameMillis too)
+            //or just use a delay
+            withFrameNanos {
+                keyHandler.handleInLoop()
+            }
+        }
     }
 }
 ```

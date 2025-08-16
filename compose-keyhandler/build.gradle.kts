@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.github.loop312"
-version = "0.6.1"
+version = "0.7.0"
 
 kotlin {
     androidTarget {
@@ -151,7 +151,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.compose_keyhandler"
-            packageVersion = "1.0.0"
+            packageVersion = "$version"
         }
     }
 }

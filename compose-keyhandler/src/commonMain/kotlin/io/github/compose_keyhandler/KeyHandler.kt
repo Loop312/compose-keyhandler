@@ -6,7 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.key.*
 
-class KeyHandler (consume: Boolean = true, init: KeyHandler.() -> Unit = {}) {
+class KeyHandler (
+    val loopBasedHandling: Boolean = false, //choose method for continuous handling
+    val consume: Boolean = true,
+    init: KeyHandler.() -> Unit = {}
+) {
     //keeps track of pressed keys
     var pressedKeys by mutableStateOf(setOf<Key>())
 
@@ -72,16 +76,19 @@ class KeyHandler (consume: Boolean = true, init: KeyHandler.() -> Unit = {}) {
                 }
 
                 //continuous key actions
-                if (event.key in keys) {
+                if (event.key in keys && !loopBasedHandling) {
                     keys[event.key]?.action?.invoke()
                 }
 
                 //continuous combination actions
-                combinations.forEach { (combination, keyAction) ->
-                    if (pressedKeys.containsAll(combination)) {
-                        keyAction.action.invoke()
+                if (!loopBasedHandling) {
+                    combinations.forEach { (combination, keyAction) ->
+                        if (pressedKeys.containsAll(combination)) {
+                            keyAction.action.invoke()
+                        }
                     }
                 }
+
 
                 //single combination actions
                 singleActionCombinations.forEach { (combination, keyAction) ->
@@ -101,6 +108,22 @@ class KeyHandler (consume: Boolean = true, init: KeyHandler.() -> Unit = {}) {
             }
         }
         consume
+    }
+
+    //only use when loopBasedHandling = true
+    fun handleInLoop() {
+        if (loopBasedHandling) {
+            pressedKeys.forEach { key ->
+                if (key in keys) {
+                    keys[key]?.action?.invoke()
+                }
+            }
+            combinations.forEach { (combination, keyAction) ->
+                if (pressedKeys.containsAll(combination)) {
+                    keyAction.action.invoke()
+                }
+            }
+        }
     }
 
     override fun toString(): String {

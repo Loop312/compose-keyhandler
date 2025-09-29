@@ -1,11 +1,30 @@
 ![Maven Central Version](https://img.shields.io/maven-central/v/io.github.loop312/compose-keyhandler)
 
 
-# Usage
+## 1. About the Project: Compose KeyHandler 🚀
 
-*MUST USE WITH COMPOSE MULTIPLATFORM*
+This section introduces the library and highlights its core features.
+
+> **Compose KeyHandler** is a modern, lifecycle-aware library for handling keyboard input in **Jetpack Compose/Compose Multiplatform**. It provides a clean, Type-Safe Builder (DSL) to define single-key presses, complex key combinations, and continuous actions without manually tracking key states or managing coroutine loops.
+>
+> ### Core Features:
+>
+>   * **DSL-Driven Configuration:** Map keys and combos using expressive blocks like `onPress { ... }` and `onHold { ... }`.
+>   * **Lifecycle-Aware Holds:** Use the **`KeyHandlerHost`** composable to safely manage continuous **`ON_HOLD`** actions, preventing resource leaks and ensuring KMP stability.
+>   * **Four Distinct Triggers:** Clearly separate logic for different input needs:
+>       * **`onPress`**: Action runs once when the key/combo is pressed.
+>       * **`onRelease`**: Action runs once when the key/combo is released.
+>       * **`onRepeat`**: Action runs for every system-generated repeat event (good for text input).
+>       * **`onHold`**: Action runs at a fixed, configurable frequency (e.g., 60 FPS) while the key/combo is down (perfect for game movement).
+>   * **Automatic Focus Management:** The `KeyHandlerHost` automatically requests focus for the content it wraps to ensure key events are received.
+
+-----
+
+
+
+## 2. Getting Started: Installation
+
 ### build.gradle.kts
-
 ```kotlin
 kotlin {
     //...
@@ -16,107 +35,105 @@ kotlin {
             //Format: groupId:artifactId:version
             //groupId = io.github.loop312
             //artifactId = compose-keyhandler
-            //version = 0.7.0 (choose latest version instead)
-            implementation("io.github.loop312:compose-keyhandler:0.7.0")
+            //version = 1.0.0 (choose latest version instead)
+            implementation("io.github.loop312:compose-keyhandler:1.0.0")
         }
     }
 }
 ```
 
 ```kotlin
-implementation("io.github.loop312:compose-keyhandler:0.7.0") 
+implementation("io.github.loop312:compose-keyhandler:1.0.0") 
 ```
+## 3. Getting Started: Usage
 
 ### Common Main
 ```kotlin
-/*initializer:
-KeyHandler (
-    loopBasedHandling -> this is for truly continuous execution rather than relying on systems input delay, 
-    requires use of KeyHandler.handleInLoop(), Default: false
-    
-    consume -> this is for whether to consume the key event or not, Default: true
-) {
-    initialize keys here
-}
-*/
-//-----------------------------------------------------------------------------------
-//import io.github.loop312.compose_keyhandler.KeyHandler
-//import androidx.compose.ui.Modifier
+//import...
 //import androidx.compose.ui.input.key.Key
-//import androidx.compose.ui.input.key.onKeyEvent
-//...
+//import io.github.loop312.compose_keyhandler.KeyHandler
+//import io.github.loop312.compose_keyhandler.KeyHandlerHost
+
 
 @Composable
-fun main() {
-    //if initializing outside a composable, don't use remember {}
-    val keyHandler = remember {
-        KeyHandler(loopBasedHandling = false, consume = true) {
-            //continuous execution
-            addKey(key = Key.A, description = "Prints A is being pressed") {
-                println("A is being pressed")
-                //or any other action you want to do
+@Preview
+fun KeyHandlerTest() {
+    //use remember to prevent reinitialization in compose multiplatform
+    val keyHandler = remember { setupKeyHandler() }
+    //KeyHandlerHost is a composable that hosts the key handler
+    KeyHandlerHost(keyHandler) {
+        Text(keyHandler.toString())
+    }
+}
+
+private fun setupKeyHandler(): KeyHandler {
+    return KeyHandler {
+        //will only activate when the key is initially pressed
+        onPress {
+            key(Key.A, "A was pressed") {
+                println("A was pressed")
             }
-
-            //println(getDescription(Key.A))
-
-            addMultipleKeys(keySet = setOf(Key.B, Key.C), description = "Prints B or C is being pressed") {
-                println("B or C is being pressed")
-                //or any other action you want to do
+            key(Key.B, Key.C, "B or C was pressed") {
+                println("B or C was pressed")
             }
-
-            //one-time execution
-            addSingleActionKey(Key.D, "Prints D was pressed") {
-                println("D was pressed")
-                //or any other action you want to do
-            }
-
-            addMultipleSingleActionKeys(setOf(Key.E, Key.F), "Prints E or F was pressed") {
-                println("E or F was pressed")
-                //or any other action you want to do
-            }
-
-            //on release execution
-            addReleaseKey(Key.G, "Prints G was released") {
-                println("G was released")
-                //or any other action you want to do
-            }
-
-            addMultipleReleaseKeys(setOf(Key.H, Key.I), "Prints H or I was released") {
-                println("H or I was released")
-                //or any other action you want to do
-            }
-
-            //continuous combination execution
-            addCombination(setOf(Key.J, Key.K), "Prints J and K are being pressed") {
-                println("J and K are being pressed")
-                //or any other action you want to do
-            }
-
-            //println(getDescription(setOf(Key.J, Key.K)))
-
-            //one-time combination execution
-            addSingleActionCombination(setOf(Key.L, Key.M), "Prints L and M were pressed") {
-                println("L and M were pressed")
-                //or any other action you want to do
+            combo(Key.D, Key.E, "D and E were pressed") {
+                println("D and E were pressed")
             }
         }
-    }
-    //or Modifier.onPreviewKeyEvent(keyHandler.listen)
-    Box(Modifier.onKeyEvent(keyHandler.listen)) {
-        //...
-    }
-    
-    //optional, for continuous execution (set loopBasedHandling = true)
-    LaunchedEffect(Unit) {
-        while (true) {
-            //if you want to automatically handle it with every frame (can use withFrameMillis too)
-            //or just use a delay
-            withFrameNanos {
-                keyHandler.handleInLoop()
+        //will only activate when the key is released
+        onRelease {
+            key(Key.F, "F was released") {
+                println("F was released")
+            }
+            key(Key.G, Key.H, "G or H was released") {
+                println("G or H was released")
+            }
+            combo(Key.I, Key.J, "I and J were released") {
+                println("I and J were released")
+            }
+        }
+        //will activate while the key is held (change holdTriggerFrequency to change how often it activates per second)
+        //(default 60 times per second)
+        onHold {
+            key(Key.K, "K is being held") {
+                println("K is being held")
+            }
+            key(Key.L, Key.M, "L or M is being held") {
+                println("L or M is being held")
+            }
+            combo(Key.N, Key.O, "N and O are being held") {
+                println("N and O are being held")
+            }
+        }
+        //will activate/fire at the rate of the system's input
+        //like holding down a key while on a search bar
+        onRepeat {
+            key(Key.P, "P is being repeated") {
+                println("P is being repeated")
+            }
+            key(Key.Q, Key.R, "Q or R is being repeated") {
+                println("Q or R is being repeated")
+            }
+            combo(Key.S, Key.T, "S and T are being repeated") {
+                println("S and T are being repeated")
             }
         }
     }
 }
 ```
 
-### NOTE: Make sure object with modifier `onKeyEvent` or `onPreviewKeyEvent` is in focus
+## 4. Configuration
+
+> #### The Difference Between `onPress`, `onRelease`, `onHold` and `onRepeat`
+>
+> | Trigger         | Behavior                                                         | Ideal Use Case                                                                                   |
+> |:----------------|:-----------------------------------------------------------------|:-------------------------------------------------------------------------------------------------|
+> | **`onPress`**   | Action runs once when the key/combo is pressed.                  | **Simple Key Presses**, like opening a menu or triggering an action.                             |
+> | **`onRelease`** | Action runs once when the key/combo is released.                 | **Simple Key Releases**, like closing a menu or triggering an action.                            |
+> | **`onHold`**    | Action runs at a **fixed rate** (set by `holdTriggerFrequency`). | **Game Movement**, physics updates, continuous non-UI state changes.                             |
+> | **`onRepeat`**  | Action runs for every **system key repeat event**.               | **Native UI behavior**, like moving a cursor in a `TextField` or using the arrow keys to scroll. |
+> 
+
+## 5. CHANGELOG
+
+[CHANGELOG](CHANGELOG.md)

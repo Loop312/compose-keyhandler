@@ -17,6 +17,7 @@ fun KeyHandlerTest() {
 
 private fun setupKeyHandler(): KeyHandler {
     return KeyHandler {
+        //will only activate when the key is initially pressed
         onPress {
             key(Key.A, "A was pressed") {
                 println("A was pressed")
@@ -28,6 +29,7 @@ private fun setupKeyHandler(): KeyHandler {
                 println("D and E were pressed")
             }
         }
+        //will only activate when the key is released
         onRelease {
             key(Key.F, "F was released") {
                 println("F was released")
@@ -39,6 +41,8 @@ private fun setupKeyHandler(): KeyHandler {
                 println("I and J were released")
             }
         }
+        //will activate while the key is held (change holdTriggerFrequency to change how often it activates per second)
+        //(default 60 times per second)
         onHold {
             key(Key.K, "K is being held") {
                 println("K is being held")
@@ -50,6 +54,8 @@ private fun setupKeyHandler(): KeyHandler {
                 println("N and O are being held")
             }
         }
+        //will activate/fire at the rate of the system's input
+        //like holding down a key while on a search bar
         onRepeat {
             key(Key.P, "P is being repeated") {
                 println("P is being repeated")

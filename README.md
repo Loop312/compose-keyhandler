@@ -3,11 +3,9 @@
 
 ## 1. About the Project: Compose KeyHandler 🚀
 
-This section introduces the library and highlights its core features.
+ **Compose KeyHandler** is a modern, lifecycle-aware library for handling keyboard input in **Jetpack Compose/Compose Multiplatform**. It provides a clean, Type-Safe Builder (DSL) to define single-key presses, complex key combinations, and continuous actions without manually tracking key states or managing coroutine loops.
 
-> **Compose KeyHandler** is a modern, lifecycle-aware library for handling keyboard input in **Jetpack Compose/Compose Multiplatform**. It provides a clean, Type-Safe Builder (DSL) to define single-key presses, complex key combinations, and continuous actions without manually tracking key states or managing coroutine loops.
->
-> ### Core Features:
+ ### Core Features:
 >
 >   * **DSL-Driven Configuration:** Map keys and combos using expressive blocks like `onPress { ... }` and `onHold { ... }`.
 >   * **Lifecycle-Aware Holds:** Use the **`KeyHandlerHost`** composable to safely manage continuous **`ON_HOLD`** actions, preventing resource leaks and ensuring KMP stability.
@@ -45,6 +43,9 @@ kotlin {
 ```kotlin
 implementation("io.github.loop312:compose-keyhandler:1.0.0") 
 ```
+
+-----
+
 ## 3. Getting Started: Usage
 
 ### Common Main
@@ -122,6 +123,8 @@ private fun setupKeyHandler(): KeyHandler {
 }
 ```
 
+-----
+
 ## 4. Configuration
 
 > #### The Difference Between `onPress`, `onRelease`, `onHold` and `onRepeat`
@@ -132,7 +135,8 @@ private fun setupKeyHandler(): KeyHandler {
 > | **`onRelease`** | Action runs once when the key/combo is released.                 | **Simple Key Releases**, like closing a menu or triggering an action.                            |
 > | **`onHold`**    | Action runs at a **fixed rate** (set by `holdTriggerFrequency`). | **Game Movement**, physics updates, continuous non-UI state changes.                             |
 > | **`onRepeat`**  | Action runs for every **system key repeat event**.               | **Native UI behavior**, like moving a cursor in a `TextField` or using the arrow keys to scroll. |
-> 
+
+-----
 
 ## 5. CHANGELOG
 

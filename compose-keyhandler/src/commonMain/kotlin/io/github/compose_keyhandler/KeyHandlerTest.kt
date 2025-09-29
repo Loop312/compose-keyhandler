@@ -1,107 +1,71 @@
 package io.github.compose_keyhandler
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.onKeyEvent
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
 @Composable
 @Preview
 fun KeyHandlerTest() {
-    val keyHandler = remember { setupKeyHandlerForTesting(false) }
-
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }, Modifier.onKeyEvent(keyHandler.listen)) {
-                Text("Click me!")
-            }
-            Text(keyHandler.toString())
-        }
+    val keyHandler = remember { setupKeyHandler() }
+    KeyHandlerHost(keyHandler) {
+        Text(keyHandler.toString())
     }
 }
 
-@Composable
-@Preview
-fun KeyHandlerTest2() { //loop based handling
-    val keyHandler = remember { setupKeyHandlerForTesting(true) }
-
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }, Modifier.onKeyEvent(keyHandler.listen)) {
-                Text("Click me!")
+private fun setupKeyHandler(): KeyHandler {
+    return KeyHandler {
+        //will only activate when the key is initially pressed
+        onPress {
+            key(Key.A, "A was pressed") {
+                println("A was pressed")
             }
-            Text(keyHandler.toString())
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            withFrameNanos {
-                keyHandler.handleInLoop()
+            key(Key.B, Key.C, "B or C was pressed") {
+                println("B or C was pressed")
+            }
+            combo(Key.D, Key.E, "D and E were pressed") {
+                println("D and E were pressed")
             }
         }
-    }
-}
-
-private fun setupKeyHandlerForTesting(loopBased: Boolean): KeyHandler {
-    return KeyHandler(loopBased) {
-        //continuous execution
-        addKey(key = Key.A, description = "Prints A is being pressed") {
-            println("A is being pressed")
-            //or any other action you want to do
+        //will only activate when the key is released
+        onRelease {
+            key(Key.F, "F was released") {
+                println("F was released")
+            }
+            key(Key.G, Key.H, "G or H was released") {
+                println("G or H was released")
+            }
+            combo(Key.I, Key.J, "I and J were released") {
+                println("I and J were released")
+            }
         }
-
-        //println(getDescription(Key.A))
-
-        addMultipleKeys(keySet = setOf(Key.B, Key.C), description = "Prints B or C is being pressed") {
-            println("B or C is being pressed")
-            //or any other action you want to do
+        //will activate while the key is held (change holdTriggerFrequency to change how often it activates per second)
+        //(default 60 times per second)
+        onHold {
+            key(Key.K, "K is being held") {
+                println("K is being held")
+            }
+            key(Key.L, Key.M, "L or M is being held") {
+                println("L or M is being held")
+            }
+            combo(Key.N, Key.O, "N and O are being held") {
+                println("N and O are being held")
+            }
         }
-
-        //one-time execution
-        addSingleActionKey(Key.D, "Prints D was pressed") {
-            println("D was pressed")
-            //or any other action you want to do
-        }
-
-        addMultipleSingleActionKeys(setOf(Key.E, Key.F), "Prints E or F was pressed") {
-            println("E or F was pressed")
-            //or any other action you want to do
-        }
-
-        //on release execution
-        addReleaseKey(Key.G, "Prints G was released") {
-            println("G was released")
-            //or any other action you want to do
-        }
-
-        addMultipleReleaseKeys(setOf(Key.H, Key.I), "Prints H or I was released") {
-            println("H or I was released")
-            //or any other action you want to do
-        }
-
-        //continuous combination execution
-        addCombination(setOf(Key.J, Key.K), "Prints J and K are being pressed") {
-            println("J and K are being pressed")
-            //or any other action you want to do
-        }
-
-        //println(getDescription(setOf(Key.J, Key.K)))
-
-        //one-time combination execution
-        addSingleActionCombination(setOf(Key.L, Key.M), "Prints L and M were pressed") {
-            println("L and M were pressed")
-            //or any other action you want to do
+        //will activate/fire at the rate of the system's input
+        //like holding down a key while on a search bar
+        onRepeat {
+            key(Key.P, "P is being repeated") {
+                println("P is being repeated")
+            }
+            key(Key.Q, Key.R, "Q or R is being repeated") {
+                println("Q or R is being repeated")
+            }
+            combo(Key.S, Key.T, "S and T are being repeated") {
+                println("S and T are being repeated")
+            }
         }
     }
 }

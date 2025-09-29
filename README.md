@@ -5,16 +5,16 @@
 
  **Compose KeyHandler** is a modern, lifecycle-aware library for handling keyboard input in **Jetpack Compose/Compose Multiplatform**. It provides a clean, Type-Safe Builder (DSL) to define single-key presses, complex key combinations, and continuous actions without manually tracking key states or managing coroutine loops.
 
- ### Core Features:
->
->   * **DSL-Driven Configuration:** Map keys and combos using expressive blocks like `onPress { ... }` and `onHold { ... }`.
->   * **Lifecycle-Aware Holds:** Use the **`KeyHandlerHost`** composable to safely manage continuous **`ON_HOLD`** actions, preventing resource leaks and ensuring KMP stability.
->   * **Four Distinct Triggers:** Clearly separate logic for different input needs:
->       * **`onPress`**: Action runs once when the key/combo is pressed.
->       * **`onRelease`**: Action runs once when the key/combo is released.
->       * **`onRepeat`**: Action runs for every system-generated repeat event (good for text input).
->       * **`onHold`**: Action runs at a fixed, configurable frequency (e.g., 60 FPS) while the key/combo is down (perfect for game movement).
->   * **Automatic Focus Management:** The `KeyHandlerHost` automatically requests focus for the content it wraps to ensure key events are received.
+### Core Features:
+
+* **DSL-Driven Configuration:** Map keys and combos using expressive blocks like `onPress { ... }` and `onHold { ... }`.
+* **Lifecycle-Aware Holds:** Use the **`KeyHandlerHost`** composable to safely manage continuous **`ON_HOLD`** actions, preventing resource leaks and ensuring KMP stability.
+* **Four Distinct Triggers:** Clearly separate logic for different input needs:
+  * **`onPress`**: Action runs once when the key/combo is pressed.
+  * **`onRelease`**: Action runs once when the key/combo is released.
+  * **`onRepeat`**: Action runs for every system-generated repeat event (good for text input).
+  * **`onHold`**: Action runs at a fixed, configurable frequency (e.g., 60 FPS) while the key/combo is down (perfect for game movement).
+* **Automatic Focus Management:** The `KeyHandlerHost` automatically requests focus for the content it wraps to ensure key events are received.
 
 -----
 
@@ -127,14 +127,14 @@ private fun setupKeyHandler(): KeyHandler {
 
 ## 4. Configuration
 
-> #### The Difference Between `onPress`, `onRelease`, `onHold` and `onRepeat`
->
-> | Trigger         | Behavior                                                         | Ideal Use Case                                                                                   |
-> |:----------------|:-----------------------------------------------------------------|:-------------------------------------------------------------------------------------------------|
-> | **`onPress`**   | Action runs once when the key/combo is pressed.                  | **Simple Key Presses**, like opening a menu or triggering an action.                             |
-> | **`onRelease`** | Action runs once when the key/combo is released.                 | **Simple Key Releases**, like closing a menu or triggering an action.                            |
-> | **`onHold`**    | Action runs at a **fixed rate** (set by `holdTriggerFrequency`). | **Game Movement**, physics updates, continuous non-UI state changes.                             |
-> | **`onRepeat`**  | Action runs for every **system key repeat event**.               | **Native UI behavior**, like moving a cursor in a `TextField` or using the arrow keys to scroll. |
+#### The Difference Between `onPress`, `onRelease`, `onHold` and `onRepeat`
+
+ | Trigger         | Behavior                                                         | Ideal Use Case                                                                                   |
+ |:----------------|:-----------------------------------------------------------------|:-------------------------------------------------------------------------------------------------|
+ | **`onPress`**   | Action runs once when the key/combo is pressed.                  | **Simple Key Presses**, like opening a menu or triggering an action.                             |
+ | **`onRelease`** | Action runs once when the key/combo is released.                 | **Simple Key Releases**, like closing a menu or triggering an action.                            |
+ | **`onHold`**    | Action runs at a **fixed rate** (set by `holdTriggerFrequency`). | **Game Movement**, physics updates, continuous non-UI state changes.                             |
+ | **`onRepeat`**  | Action runs for every **system key repeat event**.               | **Native UI behavior**, like moving a cursor in a `TextField` or using the arrow keys to scroll. |
 
 -----
 

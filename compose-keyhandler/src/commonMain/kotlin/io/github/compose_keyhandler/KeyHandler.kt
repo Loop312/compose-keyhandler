@@ -4,61 +4,84 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.input.key.*
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 class KeyHandler (
-    val loopBasedHandling: Boolean = false, //choose method for continuous handling
     val consume: Boolean = true,
+    val holdTriggerFrequency: Int = 60,
     init: KeyHandler.() -> Unit = {}
 ) {
     //keeps track of pressed keys
-    var pressedKeys by mutableStateOf(setOf<Key>())
+    private var pressedKeys by mutableStateOf(setOf<Key>())
 
     //single key actions
-    var keys = mutableStateMapOf<Key, KeyAction>()
-    var singleActionKeys = mutableStateMapOf<Key, KeyAction>()
-    var releaseKeys = mutableStateMapOf<Key, KeyAction>()
+    private var onPressKeys = mutableStateMapOf<Key, KeyAction>()
+    private var onReleaseKeys = mutableStateMapOf<Key, KeyAction>()
+    internal var onHoldKeys = mutableStateMapOf<Key, KeyAction>()
+    private var onRepeatKeys = mutableStateMapOf<Key, KeyAction>()
 
     //combinations actions
-    var combinations = mutableStateMapOf<Set<Key>, KeyAction>()
-    var singleActionCombinations = mutableStateMapOf<Set<Key>, KeyAction>()
+    private var onPressCombos = mutableStateMapOf<Set<Key>, KeyAction>()
+    private var onReleaseCombos = mutableStateMapOf<Set<Key>, KeyAction>()
+    internal var onHoldCombos = mutableStateMapOf<Set<Key>, KeyAction>()
+    private var onRepeatCombos = mutableStateMapOf<Set<Key>, KeyAction>()
+
 
     init {
         this.init()
     }
 
-    //add/replace functions
-    fun addKey(key: Key, description: String = "No description", action: () -> Unit) {
-        keys[key] = KeyAction(description, action)
-    }
-    fun addMultipleKeys(keySet: Set<Key>, description: String = "No description", action: () -> Unit) {
-        keySet.forEach { key -> keys[key] = KeyAction(description, action) }
-    }
-    fun addSingleActionKey(key: Key, description: String = "No description", action: () -> Unit) {
-        singleActionKeys[key] = KeyAction(description, action)
-    }
-    fun addMultipleSingleActionKeys(keySet: Set<Key>, description: String = "No description", action: () -> Unit) {
-        keySet.forEach { key -> singleActionKeys[key] = KeyAction(description, action) }
-    }
-    fun addReleaseKey(key: Key, description: String = "No description", action: () -> Unit) {
-        releaseKeys[key] = KeyAction(description, action)
-    }
-    fun addMultipleReleaseKeys(keySet: Set<Key>, description: String = "No description", action: () -> Unit) {
-        keySet.forEach { key -> releaseKeys[key] = KeyAction(description, action) }
-    }
-    fun addCombination(combination: Set<Key>, description: String = "No description", action: () -> Unit) {
-        combinations[combination] = KeyAction(description, action)
-    }
-    fun addSingleActionCombination(combination: Set<Key>, description: String = "No description", action: () -> Unit) {
-        singleActionCombinations[combination] = KeyAction(description, action)
+    internal fun addKey(key: Key, trigger: Trigger, description: String = "No description", action: () -> Unit) {
+        when (trigger) {
+            Trigger.ON_PRESS -> onPressKeys[key] = KeyAction(description, action)
+            Trigger.ON_RELEASE -> onReleaseKeys[key] = KeyAction(description, action)
+            Trigger.ON_HOLD -> onHoldKeys[key] = KeyAction(description, action)
+            Trigger.ON_REPEAT -> onRepeatKeys[key] = KeyAction(description, action)
+        }
     }
 
-    fun getDescription(key: Key): String? {
-        return keys[key]?.description
+    internal fun addCombo(keySet: Set<Key>, trigger: Trigger, description: String, action: () -> Unit){
+        when (trigger) {
+            Trigger.ON_PRESS -> onPressCombos[keySet] = KeyAction(description, action)
+            Trigger.ON_RELEASE -> onReleaseCombos[keySet] = KeyAction(description, action)
+            Trigger.ON_HOLD -> onHoldCombos[keySet] = KeyAction(description, action)
+            Trigger.ON_REPEAT -> onRepeatCombos[keySet] = KeyAction(description, action)
+        }
+    }
+    //key description
+    fun getDescription(key: Key, trigger: Trigger): String? {
+        return when (trigger) {
+            Trigger.ON_PRESS -> onPressKeys[key]?.description
+            Trigger.ON_RELEASE -> onReleaseKeys[key]?.description
+            Trigger.ON_HOLD -> onHoldKeys[key]?.description
+            Trigger.ON_REPEAT -> onRepeatKeys[key]?.description
+        }
+    }
+    //combo description
+    fun getDescription(combination: Set<Key>, trigger: Trigger): String? {
+        return when (trigger) {
+            Trigger.ON_PRESS -> onPressCombos[combination]?.description
+            Trigger.ON_RELEASE -> onReleaseCombos[combination]?.description
+            Trigger.ON_HOLD -> onHoldCombos[combination]?.description
+            Trigger.ON_REPEAT -> onRepeatCombos[combination]?.description
+        }
     }
 
-    fun getDescription(combination: Set<Key>): String? {
-        return combinations[combination]?.description
+    fun onPress(builder: KeyActionBuilder.() -> Unit) {
+        KeyActionBuilder(this, Trigger.ON_PRESS).apply(builder)
+    }
+    fun onRelease(builder: KeyActionBuilder.() -> Unit) {
+        KeyActionBuilder(this, Trigger.ON_RELEASE).apply(builder)
+    }
+    fun onHold(builder: KeyActionBuilder.() -> Unit) {
+        KeyActionBuilder(this, Trigger.ON_HOLD).apply(builder)
+    }
+    fun onRepeat(builder: KeyActionBuilder.() -> Unit) {
+        KeyActionBuilder(this, Trigger.ON_REPEAT).apply(builder)
     }
 
     //use modifier = "Modifier.onKeyEvent(KeyHandler.listen)"
@@ -66,102 +89,131 @@ class KeyHandler (
         val previousPressedKeys = pressedKeys
         when (event.type) {
             KeyEventType.KeyDown -> {
+                //add key to pressedKeys if not already pressed
                 if (event.key !in previousPressedKeys) {
                     pressedKeys = previousPressedKeys + event.key
                 }
 
-                //single key actions
-                if (event.key in singleActionKeys && event.key !in previousPressedKeys) {
-                    singleActionKeys[event.key]?.action?.invoke()
+                //single key actions (onPress)
+                if (event.key in onPressKeys && event.key !in previousPressedKeys) {
+                    onPressKeys[event.key]?.action?.invoke()
                 }
 
-                //continuous key actions
-                if (event.key in keys && !loopBasedHandling) {
-                    keys[event.key]?.action?.invoke()
+                //continuous key actions (onRepeat)
+                if (event.key in onRepeatKeys) {
+                    onRepeatKeys[event.key]?.action?.invoke()
                 }
 
-                //continuous combination actions
-                if (!loopBasedHandling) {
-                    combinations.forEach { (combination, keyAction) ->
-                        if (pressedKeys.containsAll(combination)) {
-                            keyAction.action.invoke()
-                        }
-                    }
-                }
-
-
-                //single combination actions
-                singleActionCombinations.forEach { (combination, keyAction) ->
+                //single combination actions (onPress)
+                onPressCombos.forEach { (combination, keyAction) ->
                     val isCurrentlyPressed = pressedKeys.containsAll(combination)
                     val wasPreviouslyPressed = previousPressedKeys.containsAll(combination)
                     if (isCurrentlyPressed && !wasPreviouslyPressed) {
                         keyAction.action.invoke()
                     }
                 }
+
+                //continuous combination actions (onRepeat)
+                onRepeatCombos.forEach { (combination, keyAction) ->
+                    if (pressedKeys.containsAll(combination)) {
+                        keyAction.action.invoke()
+                    }
+                }
             }
+
             KeyEventType.KeyUp -> {
                 pressedKeys -= event.key
-                //release key actions
-                if (event.key in releaseKeys) {
-                    releaseKeys[event.key]?.action?.invoke()
+                //release key actions (onRelease)
+                if (event.key in onReleaseKeys) {
+                    onReleaseKeys[event.key]?.action?.invoke()
+                }
+
+                //single combination actions (onRelease)
+                onReleaseCombos.forEach { (combination, keyAction) ->
+                    val isCurrentlyPressed = pressedKeys.containsAll(combination)
+                    val wasPreviouslyPressed = previousPressedKeys.containsAll(combination)
+                    if (!isCurrentlyPressed && wasPreviouslyPressed) {
+                        keyAction.action.invoke()
+                    }
                 }
             }
         }
         consume
     }
 
-    //only use when loopBasedHandling = true
-    fun handleInLoop() {
-        if (loopBasedHandling) {
-            pressedKeys.forEach { key ->
-                if (key in keys) {
-                    keys[key]?.action?.invoke()
+    suspend fun startHoldLoop() {
+        val delay = if (holdTriggerFrequency > 0) 1000L / holdTriggerFrequency else withFrameMillis { it }
+        while (currentCoroutineContext().isActive) {
+            onHoldKeys.forEach { (key, keyAction) ->
+                if (key in pressedKeys) {
+                    keyAction.action.invoke()
                 }
             }
-            combinations.forEach { (combination, keyAction) ->
+            onHoldCombos.forEach { (combination, keyAction) ->
                 if (pressedKeys.containsAll(combination)) {
                     keyAction.action.invoke()
                 }
             }
+            delay(delay)
         }
     }
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("--------------------------\n")
+        sb.append("-------------------------------\n")
+        sb.append("Hold Trigger Frequency: $holdTriggerFrequency\n")
+        sb.append("Consume: $consume\n")
         sb.append("Pressed Keys: $pressedKeys\n")
 
-        sb.append("Keys (continuous): {\n")
-        keys.forEach { (key, keyAction) -> sb.append("  $key: ${keyAction.description}\n") }
-        sb.append("}\n")
+        if (onPressKeys.isNotEmpty() || onPressCombos.isNotEmpty()) {
+            sb.append("OnPress: \n")
+            sb.append("  Keys: \n")
+            onPressKeys.forEach { (key, keyAction) ->
+                sb.append("    $key: ${keyAction.description}\n")
+            }
+            sb.append("  Combinations: \n")
+            onPressCombos.forEach { (combination, keyAction) ->
+                sb.append("    ${combination.joinToString(" + ")}: ${keyAction.description}\n")
+            }
+        }
 
-        sb.append("Single Action Keys: {\n")
-        singleActionKeys.forEach { (key, keyAction) -> sb.append("  $key: ${keyAction.description}\n") }
-        sb.append("}\n")
+        if (onReleaseKeys.isNotEmpty() || onReleaseCombos.isNotEmpty()) {
+            sb.append("\nOnRelease: \n")
+            sb.append("  Keys: \n")
+            onReleaseKeys.forEach { (key, keyAction) ->
+                sb.append("    $key: ${keyAction.description}\n")
+            }
+            sb.append("  Combinations: \n")
+            onReleaseCombos.forEach { (combination, keyAction) ->
+                sb.append("    ${combination.joinToString(" + ")}: ${keyAction.description}\n")
+            }
+        }
 
-        sb.append("Release Keys: {\n")
-        releaseKeys.forEach { (key, keyAction) -> sb.append("  $key: ${keyAction.description}\n") }
-        sb.append("}\n")
+        if (onHoldKeys.isNotEmpty() || onHoldCombos.isNotEmpty()) {
+            sb.append("\nOnHold: \n")
+            sb.append("  Keys: \n")
+            onHoldKeys.forEach { (key, keyAction) ->
+                sb.append("    $key: ${keyAction.description}\n")
+            }
+            sb.append("  Combinations: \n")
+            onHoldCombos.forEach { (combination, keyAction) ->
+                sb.append("    ${combination.joinToString(" + ")}: ${keyAction.description}\n")
+            }
+        }
 
-        sb.append("Combinations (continuous): {\n")
-        combinations.forEach { (combo, keyAction) -> sb.append("  ${combo.joinToString("+")}: ${keyAction.description}\n") }
-        sb.append("}\n")
+        if (onRepeatKeys.isNotEmpty() || onRepeatCombos.isNotEmpty()) {
+            sb.append("\nOnRepeat: \n")
+            sb.append("    Keys: \n")
+            onRepeatKeys.forEach { (key, keyAction) ->
+                sb.append("    $key: ${keyAction.description}\n")
+            }
+            sb.append("  Combinations: \n")
+            onRepeatCombos.forEach { (combination, keyAction) ->
+                sb.append("    ${combination.joinToString(" + ")}: ${keyAction.description}\n")
+            }
+        }
 
-        sb.append("Single Action Combinations: {\n")
-        singleActionCombinations.forEach { (combo, keyAction) -> sb.append("  ${combo.joinToString("+")}: ${keyAction.description}\n") }
-        sb.append("}\n")
-
-        // If releaseCombinations are added back:
-        // sb.append("Release Combinations: {\n")
-        // releaseCombinations.forEach { (combo, keyAction) -> sb.append("  ${combo.joinToString("+")}: ${keyAction.description}\n") }
-        // sb.append("}\n")
-
-        sb.append("--------------------------")
+        sb.append("-------------------------------")
         return sb.toString()
     }
 }
-
-data class KeyAction(
-    val description: String,
-    val action: () -> Unit
-)

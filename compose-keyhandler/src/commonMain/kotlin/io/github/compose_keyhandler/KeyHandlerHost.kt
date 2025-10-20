@@ -8,6 +8,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -18,6 +19,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun KeyHandlerHost(
     keyHandler: KeyHandler,
+    contentAlignment: Alignment = Alignment.TopStart,
+    propagateMinConstraints: Boolean = false,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -40,7 +43,7 @@ fun KeyHandlerHost(
         }
     }
 
-    Box(modifier = modifier
+    Box(contentAlignment = contentAlignment, propagateMinConstraints = propagateMinConstraints, modifier = modifier
         .fillMaxSize()
         .onKeyEvent(keyHandler.listen)
         .focusRequester(focusRequester)

@@ -33,15 +33,15 @@ kotlin {
             //Format: groupId:artifactId:version
             //groupId = io.github.loop312
             //artifactId = compose-keyhandler
-            //version = 1.0.0 (choose latest version instead)
-            implementation("io.github.loop312:compose-keyhandler:1.0.0")
+            //version = 1.0.1 (choose latest version instead)
+            implementation("io.github.loop312:compose-keyhandler:1.0.1")
         }
     }
 }
 ```
 
 ```kotlin
-implementation("io.github.loop312:compose-keyhandler:1.0.0") 
+implementation("io.github.loop312:compose-keyhandler:1.0.1") 
 ```
 
 -----

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.0.1
+
+### ✨ New Features
+
+- **`KeyHandlerHost`** composable now supports a `contentAlignment` parameter to align the content it wraps.
+- **`KeyHandlerHost`** composable now supports a `propagateMinConstraints` parameter to determine whether incoming minimum constraints from the parent are passed to its content
+
 ## v1.0.0
 
 This release marks a complete internal and external refactor of the key handling mechanism. The new architecture is more expressive, thread-safe, and designed specifically for Compose Multiplatform.
